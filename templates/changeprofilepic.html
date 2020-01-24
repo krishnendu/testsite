@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+        <form class="container"  method="post" enctype="multipart/form-data">{% csrf_token %}
+            <h1>Change Profile Picture</h1>
+            
+            Current Profile Picture:
+            <img src="{{ form.instance.img.url }}" alt="" style="width:100px;height:100px;" >
+            <p>
+                <input type="file" name="img"  accept="image/*" id="id_img"></td></tr>
+            </p>
+            <div class="alert alert-primary" role="alert">
+                Make sure the image is of ratio 1 : 1
+            </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+{% endblock %}
