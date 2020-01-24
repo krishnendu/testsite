@@ -33,7 +33,7 @@ def navbar(req):
 
 
 def home(req):
-    return render(req ,'base.html',navbar(req))
+    return render(req ,'home.html',navbar(req))
 
 def register(req):
     if(req.method=='POST'):

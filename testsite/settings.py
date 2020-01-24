@@ -139,7 +139,7 @@ EMAIL_HOST_USER = 'krishnenduwebserver@gmail.com'
 EMAIL_HOST_PASSWORD = 'lcwdiehhaaoimepq'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'Bhawan Team <noreply@Bhawan.home>'
+DEFAULT_FROM_EMAIL = 'My Site Team <noreply@mysite.com>'
 
 LOGIN_REDIRECT_URL='/'
 LOGIN_URL='/login'
