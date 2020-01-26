@@ -2,13 +2,13 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, logout ,login as log_in
 #from django.contrib.auth.models import User
-from .models import Account,ProfilePicture,FeedbackClass,user
+from .models import Account,ProfilePicture,FeedbackClass,user,Blog
 from django.core.exceptions import ValidationError
 from django.conf import settings
 #from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 #from .models import user,FeedbackClass
-from .forms import ProfilePictureForm , UserForm
+from .forms import ProfilePictureForm , UserForm ,BlogForm
 
 def navbar(req):
 
@@ -19,12 +19,14 @@ def navbar(req):
     phone_number='+917003033085'
     email='krishnenduchatterjee25@gmail.com'
     welcome=''
+    admin=False
     if req.user.is_authenticated:
         log='Log out'
         url='logout'
         username=req.user.username
+        admin=req.user.is_admin
         welcome='Welcome '+username
-    nav={ 'profile' : { 'name' : 'Profile' , 'url' : username , 'welcome' : welcome },
+    nav={ 'profile' : { 'name' : 'Profile' , 'url' : username , 'welcome' : welcome , 'admin' : admin},
     'log' : { 'name' : log , 'url' : url},
     'register' : {'name' : 'Register' , 'url' : 'register'},
     'copyright' : { 'name' : name , 'phone_number' : phone_number , 'email' : email ,}
@@ -33,8 +35,15 @@ def navbar(req):
 
 
 def home(req):
-    return render(req ,'home.html',navbar(req))
+    blog=Blog.objects.all()
+    ob1={ 'blogs' : blog }
+    ob1.update(navbar(req))
+    return render(req ,'home.html',ob1)
 
+def blog_view(req,shortname):
+    template = Blog.objects.get(shortname=shortname).template
+    print(template.url)
+    return render(req , template.url.split('/')[-1], navbar(req))
 def register(req):
     if(req.method=='POST'):
         email=req.POST["email"]
@@ -150,3 +159,31 @@ def feedback_view(req,username):
         return redirect('/'+username)
     else:
         return render(req,'feedback.html',navbar(req))
+
+def editblog(req,shortname):
+    if( not req.user.is_authenticated or not req.user.is_admin ):
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, req.path))
+    id=Blog.objects.get(shortname=shortname).id
+    instance =get_object_or_404(Blog, id=id)
+    #if(req.method == 'POST'):
+    form=BlogForm(req.POST or None, req.FILES or None ,instance=instance)
+    if form.is_valid():
+        form.save()
+        return redirect('/')
+    ob1={'form' : form}
+    ob1.update(navbar(req))
+    return render(req,'editblog.html',ob1)
+
+def createblog(req):
+    if( not req.user.is_authenticated or not req.user.is_admin ):
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, req.path))
+    if(req.method=='POST'):
+        form=BlogForm(req.POST)
+        if(form.is_valid()):
+            form.save()
+            return redirect('/')
+    else:
+        form=BlogForm()
+        ob1={'form' : form}
+        ob1.update(navbar(req))
+        return render(req,'editblog.html',ob1)

@@ -5,12 +5,25 @@ from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
 # Create your models here.
 
+class Blog(models.Model):
+    image = models.ImageField(upload_to='blog/image/')
+    name = models.CharField(max_length=100)
+    text = models.TextField()
+    shortname =  models.CharField(max_length=20)
+    template = models.FileField(upload_to='blog/template/')
+
 class ProfilePicture(models.Model):
     img = ProcessedImageField(upload_to='profilepic/',processors=[ResizeToFill(100,100)] , default='profilepic/default.jpg', format='JPEG' , options ={'quality': 60})
+
+    def __str__(self):
+        return (Account.objects.get(id=self.id).email)
 
 class FeedbackClass(models.Model):
     email = models.CharField(max_length=100)
     feedback = models.TextField()
+
+    def __str__(self):
+        return (self.email)
 
 
 class MyAccountManager(BaseUserManager):
@@ -52,6 +65,9 @@ class user(models.Model):
     bio = models.CharField(max_length=500)
     address = models.CharField(max_length=500)
     pincode = models.IntegerField(default=0)
+
+    def __str__(self):
+        return (Account.objects.get(id=self.id).email)
 
 
 

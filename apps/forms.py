@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.core.exceptions import ValidationError
-from .models import ProfilePicture , user
+from .models import ProfilePicture , user ,Blog
 #from django.forms.widgets import *
 
 class ProfilePictureForm(forms.ModelForm):
@@ -24,3 +24,14 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = user
         fields = ('dob','sex','bio','address','pincode')
+
+class BlogForm(forms.ModelForm):
+    image = forms.ImageField(label="Change Picture" , required=True , )
+    name = forms.CharField(max_length=100 , required=True , )
+    text = forms.CharField(widget=forms.TextInput() , required=True , )
+    shortname = forms.CharField(max_length=20 , required=True , )
+    template = forms.FileField(required=True, )
+
+    class Meta:
+        model = Blog
+        fields=('image','name','text','shortname','template')
